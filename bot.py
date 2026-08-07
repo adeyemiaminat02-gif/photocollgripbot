@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from aiohttp import web
 from telegram.ext import (
@@ -44,6 +45,13 @@ async def start_health_server() -> None:
     logger.info(f"Health check HTTP server started on port {PORT}")
 
 def main() -> None:
+    # Explicitly set the event loop for Python 3.14 compatibility
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
     app = Application.builder().token(BOT_TOKEN).build()
 
     # Register Command Handlers
